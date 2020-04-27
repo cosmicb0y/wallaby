@@ -1,16 +1,21 @@
 # wallaby
 
-A new Flutter project.
+Yalk Flutter project
 
-## Getting Started
+## How to run?
 
-This project is a starting point for a Flutter application.
+- Install Flutter
+  - See https://flutter.dev/docs/get-started/install
+- Install protobuf & protoc plugin for dart
+  - See https://grpc.io/docs/quickstart/dart/
+- Compile proto files at root of project
+  - `mkdir -p lib/generated; protoc --dart_out=grpc:lib/generated -Iproto proto/*`
+- Run flutter app
+  - `flutter run [-d <device id>]`
+  - If device is chrome, gRPC will not work without proxy
 
-A few resources to get you started if this is your first Flutter project:
+## TODO
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- [ ] Extract channel to hide different native/web channel implementation
+- [ ] Configure channel address with environment
+- [ ] Extract proto as git submodule
