@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:grpc/grpc.dart';
+
+import 'generated/Greeter.pb.dart';
+import 'generated/Greeter.pbgrpc.dart';
 
 void main() {
   runApp(MyApp());
@@ -51,6 +55,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  String _greet = '';
 
   void _incrementCounter() {
     setState(() {
@@ -61,6 +66,32 @@ class _MyHomePageState extends State<MyHomePage> {
       // called again, and so nothing would appear to happen.
       _counter++;
     });
+  }
+
+  Future<void> _changeGreet() async {
+    // TODO: Extract channel and configure with environment
+    // Channel for android/ios
+    final channel = ClientChannel(
+      '192.168.0.11',
+      port: 16565,
+      options: const ChannelOptions(credentials: ChannelCredentials.insecure()),
+    );
+    // Channel for web (Not work without proxy)
+    // final channel = GrpcWebClientChannel.xhr(Uri.parse('http://localhost:16565'));
+    final stub = GreeterClient(channel);
+
+    final name = 'Hololo!';
+
+    try {
+      var response = await stub.sayHello(HelloRequest()..name = name);
+      print('Greeter client received: ${response.message}');
+      setState(() {
+        _greet = response.message;
+      });
+    } catch (e) {
+      print('Caught error: $e');
+    }
+    await channel.shutdown();
   }
 
   @override
@@ -103,6 +134,19 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
+            ),
+            Text(
+              'Greet!!:',
+            ),
+            Text(
+              '$_greet',
+              style: Theme.of(context).textTheme.headline4,
+            ),
+            RaisedButton(
+                child: Text('Click me!'),
+                onPressed: _changeGreet,
+                textColor: Colors.white,
+                color: Colors.black,
             ),
           ],
         ),
